@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00FF00;  /* Matrix-style green text */
+        }
+
+        #matrix {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        #chat-box {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 600px;
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #00FF00;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 10px;
+            margin: 10px 0;
+            background-color: black;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+        }
+
+        button {
+            padding: 10px;
+            margin: 10px;
+            background-color: #00FF00;
+            color: black;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #006400;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    
+    <div id="chat-box">
+        <p>Welcome to the Matrix Chat!</p>
+        <!-- Messages will appear here -->
+    </div>
+
+    <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleEnter(event)" />
+    <button onclick="sendMessage()">Send</button>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script>
+        // SocketIO connection
+        var socket = io('http://13.60.225.41', {
+			transports: ['websocket', 'polling']
+		});
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('message', function(msg) {
+            console.log('Message from server:', msg);  // Add this to debug
+			let chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += '<p>' + msg + '</p>';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        function sendMessage() {
+			// Properly declare and initialize the 'message' variable
+			let message = document.getElementById('message-input').value;
+			console.log('Sending message:', message);  // Log the message being sent
+			
+			// Check if the message is not empty
+			if (message && message.trim() !== '') {
+				socket.send(message);  // Send the message via SocketIO
+				document.getElementById('message-input').value = '';  // Clear the input field
+			} else {
+				console.log('No message to send.');  // If the input is empty
+			}
+		}
+
+        // Handle "Enter" key to send the message
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Matrix background effect
+        var c = document.getElementById("matrix");
+        var ctx = c.getContext("2d");
+
+        c.height = window.innerHeight;
+        c.width = window.innerWidth;
+
+        var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        matrix = matrix.split("");
+
+        var font_size = 10;
+        var columns = c.width / font_size;
+        var drops = [];
+
+        for (var x = 0; x < columns; x++) drops[x] = 1;
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = "#00FF00";
+            ctx.font = font_size + "px arial";
+
+            for (var i = 0; i < drops.length; i++) {
+                var text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+                if (drops[i] * font_size > c.height && Math.random() > 0.975) drops[i] = 0;
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        window.onresize = function() {
+            c.height = window.innerHeight;
+            c.width = window.innerWidth;
+            columns = c.width / font_size;
+            drops = [];
+            for (var x = 0; x < columns; x++) drops[x] = 1;
+        };
+    </script>
+</body>
+</html>
