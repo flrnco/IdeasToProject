@@ -20,7 +20,7 @@ problemName='IdeasToProject'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SUPER_SECRET_KEY4321'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet'))
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Create a DynamoDB client
 dynamodb = boto3.resource('dynamodb', region_name='eu-north-1')
