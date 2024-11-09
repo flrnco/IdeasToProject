@@ -46,6 +46,24 @@
             border: 1px solid #1E90FF; /* Blue border */
         }
 
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .user-message {
+            text-align: left;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1); /* Light translucent white */
+        }
+
+        .bot-message {
+            text-align: right;
+            color: #1E90FF;
+            background-color: rgba(30, 144, 255, 0.1); /* Light translucent blue */
+        }
+
         input[type="text"] {
             width: calc(100% - 100px);
             padding: 10px;
@@ -110,15 +128,14 @@
 
         socket.on('message', function(msg) {
             console.log('Message from server:', msg); // Debugging log
-            let chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += '<p>' + msg + '</p>';
-            chatBox.scrollTop = chatBox.scrollHeight;
+            displayMessage(msg, 'bot');
         });
 
         function sendMessage() {
             let message = document.getElementById('message-input').value;
             console.log('Sending message:', message); // Debugging log
             if (message && message.trim() !== '') {
+                displayMessage(message, 'user');
                 socket.send(message);
                 document.getElementById('message-input').value = '';
                 changeAvatar(); // Change avatar on each message sent
@@ -131,6 +148,21 @@
             if (event.key === 'Enter') {
                 sendMessage();
             }
+        }
+
+        // Function to display messages in chat box
+        function displayMessage(msg, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (sender === 'user') {
+                messageElement.classList.add('user-message');
+            } else {
+                messageElement.classList.add('bot-message');
+            }
+            messageElement.textContent = msg;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         // Function to change avatar randomly
