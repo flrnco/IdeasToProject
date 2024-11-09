@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Chat</title>
+    <title>Business Flow</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: black;
+            background-color: #1E90FF; /* Ocean blue */
             font-family: 'Courier New', Courier, monospace;
-            color: #00FF00;  /* Matrix-style green text */
+            color: #FFFFFF; /* White text */
         }
 
-        #matrix {
+        #wave {
             position: fixed;
             width: 100%;
             height: 100%;
@@ -23,35 +23,35 @@
         }
 
         #chat-box {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(30, 144, 255, 0.8); /* Semi-transparent ocean blue */
             padding: 20px;
             margin: 0 auto;
             max-width: 600px;
             height: 500px;
             overflow-y: auto;
-            border: 1px solid #00FF00;
+            border: 1px solid #FFFFFF; /* White border */
         }
 
         input[type="text"] {
             width: calc(100% - 100px);
             padding: 10px;
             margin: 10px 0;
-            background-color: black;
-            color: #00FF00;
-            border: 1px solid #00FF00;
+            background-color: #1E90FF;
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
         }
 
         button {
             padding: 10px;
             margin: 10px;
-            background-color: #00FF00;
-            color: black;
+            background-color: #FFFFFF;
+            color: #1E90FF;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #006400;
+            background-color: #ADD8E6; /* Lighter blue */
         }
 
         canvas {
@@ -59,13 +59,20 @@
             top: 0;
             left: 0;
         }
+
+        #chat-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
+    <canvas id="wave"></canvas>
     
     <div id="chat-box">
-        <p>Welcome to the Matrix Chat!</p>
+        <div id="chat-title">Welcome to Business Flow!</div>
         <!-- Messages will appear here -->
     </div>
 
@@ -77,81 +84,87 @@
     <script>
         // SocketIO connection
         var socket = io('http://13.60.105.20/', {
-			transports: ['websocket', 'polling']
-		});
+            transports: ['websocket', 'polling']
+        });
 
         socket.on('connect', function() {
             console.log('Connected to server');
         });
 
         socket.on('message', function(msg) {
-            console.log('Message from server:', msg);  // Add this to debug
-			let chatBox = document.getElementById('chat-box');
+            console.log('Message from server:', msg); // Debugging log
+            let chatBox = document.getElementById('chat-box');
             chatBox.innerHTML += '<p>' + msg + '</p>';
             chatBox.scrollTop = chatBox.scrollHeight;
         });
 
         function sendMessage() {
-			// Properly declare and initialize the 'message' variable
-			let message = document.getElementById('message-input').value;
-			console.log('Sending message:', message);  // Log the message being sent
-			
-			// Check if the message is not empty
-			if (message && message.trim() !== '') {
-				socket.send(message);  // Send the message via SocketIO
-				document.getElementById('message-input').value = '';  // Clear the input field
-			} else {
-				console.log('No message to send.');  // If the input is empty
-			}
-		}
+            let message = document.getElementById('message-input').value;
+            console.log('Sending message:', message); // Debugging log
+            if (message && message.trim() !== '') {
+                socket.send(message);
+                document.getElementById('message-input').value = '';
+            } else {
+                console.log('No message to send.');
+            }
+        }
 
-        // Handle "Enter" key to send the message
         function handleEnter(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        // Matrix background effect
-        var c = document.getElementById("matrix");
-        var ctx = c.getContext("2d");
+        // Wave effect background
+        var canvas = document.getElementById("wave");
+        var ctx = canvas.getContext("2d");
 
-        c.height = window.innerHeight;
-        c.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
 
-        var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-        matrix = matrix.split("");
+        var textArray = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789".split("");
+        var fontSize = 16;
+        var columns = Math.floor(canvas.height / fontSize);
+        var waveAmplitude = 20; // Amplitude of the wave
+        var waveFrequency = 0.02; // Frequency of the wave
+        var time = 0;
 
-        var font_size = 10;
-        var columns = c.width / font_size;
         var drops = [];
-
-        for (var x = 0; x < columns; x++) drops[x] = 1;
-
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, c.width, c.height);
-            ctx.fillStyle = "#00FF00";
-            ctx.font = font_size + "px arial";
-
-            for (var i = 0; i < drops.length; i++) {
-                var text = matrix[Math.floor(Math.random() * matrix.length)];
-                ctx.fillText(text, i * font_size, drops[i] * font_size);
-
-                if (drops[i] * font_size > c.height && Math.random() > 0.975) drops[i] = 0;
-
-                drops[i]++;
-            }
+        for (var y = 0; y < columns; y++) {
+            drops[y] = 0;
         }
 
-        setInterval(draw, 33);
+        function drawWave() {
+            ctx.fillStyle = "rgba(30, 144, 255, 0.1)"; // Ocean blue transparency
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#FFFFFF"; // White text
+            ctx.font = fontSize + "px Courier New";
+
+            for (var y = 0; y < drops.length; y++) {
+                var text = textArray[Math.floor(Math.random() * textArray.length)];
+                var x = drops[y] * fontSize;
+                var waveOffset = Math.sin(y * waveFrequency + time) * waveAmplitude;
+
+                ctx.fillText(text, x, y * fontSize + waveOffset);
+
+                drops[y]++;
+
+                if (drops[y] * fontSize > canvas.width && Math.random() > 0.95) {
+                    drops[y] = 0;
+                }
+            }
+
+            time += 0.05;
+        }
+
+        setInterval(drawWave, 33);
 
         window.onresize = function() {
-            c.height = window.innerHeight;
-            c.width = window.innerWidth;
-            columns = c.width / font_size;
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            columns = Math.floor(canvas.height / fontSize);
             drops = [];
-            for (var x = 0; x < columns; x++) drops[x] = 1;
+            for (var y = 0; y < columns; y++) drops[y] = 0;
         };
     </script>
 </body>
