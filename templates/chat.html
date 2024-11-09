@@ -122,6 +122,11 @@
             transports: ['websocket', 'polling']
         });
 
+        // Display bot's initial message on page load
+        window.onload = function() {
+            displayMessage("Hello ! Je suis spécialiste en lancement de projet ! Tu peux me décrire ta dernière idée de projet ?", 'bot');
+        };
+
         socket.on('connect', function() {
             console.log('Connected to server');
         });
