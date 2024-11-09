@@ -1,13 +1,12 @@
-import os
 from mistralai import Mistral
-import tkinter as tk
 
 # Mistral init
-api_key = os.environ["MISTRAL_AI_KEY"]
+#api_key = os.environ["MISTRAL_AI_KEY"]
 model = "mistral-large-latest"
 #model = "mistral-small-latest"
 #model = "open-mistral-nemo"    # open-source
-client = Mistral(api_key=api_key)
+#client = Mistral(api_key=api_key)
+client = Mistral(api_key="MJ0ZB2X5IiJd7LslJOl74kwivn0U98QI")
 
 # List to store the conversation history
 conversation_history = []
@@ -177,46 +176,3 @@ def get_bot_response(user_input):
     })
     
     return bot_response_content
-    
-
-# Fonction pour gérer l'envoi de messages
-def send_message(entry, chat_frame, chat_canvas):
-    user_input = entry.get().strip()
-    if user_input:
-        create_message_bubble(user_input, "user", chat_frame, chat_canvas)
-        entry.delete(0, tk.END)
-
-        # Récupérer la réponse du bot et afficher la bulle de réponse
-        bot_response = get_bot_response(user_input)
-        create_message_bubble(bot_response, "bot", chat_frame, chat_canvas)
-
-# Fonction pour créer des bulles de message
-def create_message_bubble(message, sender, chat_frame, chat_canvas):
-    # Paramètres de style pour les bulles de message
-    if sender == "user":
-        bubble_color = "#128C7E"
-        text_color = "white"
-        anchor = "e"  # Aligné à droite pour l'utilisateur
-    else:
-        bubble_color = "#DCF8C6"
-        text_color = "black"
-        anchor = "w"  # Aligné à gauche pour le bot
-
-    # Créer une bulle de message en utilisant un Label
-    message_label = tk.Label(chat_frame, text=message, bg=bubble_color, fg=text_color,
-                             font=("Helvetica", 12), padx=10, pady=5, wraplength=300, justify="left")
-    message_label.pack(anchor=anchor, pady=5, padx=10)
-
-    # Faire défiler vers le bas pour voir le dernier message
-    chat_frame.update_idletasks()
-    chat_canvas.yview_moveto(1.0)
-
-# Mise à jour des dimensions du chat_frame après l'ajout de nouveaux messages
-def on_frame_configure(event, chat_canvas):
-    chat_canvas.configure(scrollregion=chat_canvas.bbox("all"))
-
-# Function to display the initial message from the bot
-def display_initial_message(chat_frame, chat_canvas):
-    initial_message = "Hey !! J'adore les idees de projets ! Tu peux me decrire la tienne pour que je t'aide a la formaliser ?"
-    create_message_bubble(initial_message, "bot", chat_frame, chat_canvas)
-    

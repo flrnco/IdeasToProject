@@ -11,6 +11,7 @@ from flask import request, redirect, url_for, flash
 import eventlet
 import time    							# To measure time performance
 import sys
+from utils import *
 
 ###########################################################################
 #            RUN                                                          #
@@ -146,7 +147,7 @@ def handle_message(message):
     logger.info(f"Message received: {message}")
     
     # Build a response    
-    response = "I recevied your chat buddy, wait a bit so I can answer..."
+    response = get_bot_response(message)
     
     message_id = str(uuid4())
     timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
