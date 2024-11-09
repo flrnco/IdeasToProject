@@ -10,9 +10,9 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #1E90FF; /* Ocean blue */
+            background-color: black; /* Black background */
             font-family: 'Courier New', Courier, monospace;
-            color: #FFFFFF; /* White text */
+            color: #1E90FF; /* Ocean blue text */
         }
 
         #wave {
@@ -23,35 +23,35 @@
         }
 
         #chat-box {
-            background-color: rgba(30, 144, 255, 0.8); /* Semi-transparent ocean blue */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
             padding: 20px;
             margin: 0 auto;
             max-width: 600px;
             height: 500px;
             overflow-y: auto;
-            border: 1px solid #FFFFFF; /* White border */
+            border: 1px solid #1E90FF; /* Blue border */
         }
 
         input[type="text"] {
             width: calc(100% - 100px);
             padding: 10px;
             margin: 10px 0;
-            background-color: #1E90FF;
-            color: #FFFFFF;
-            border: 1px solid #FFFFFF;
+            background-color: black;
+            color: #1E90FF;
+            border: 1px solid #1E90FF;
         }
 
         button {
             padding: 10px;
             margin: 10px;
-            background-color: #FFFFFF;
-            color: #1E90FF;
+            background-color: #1E90FF;
+            color: black;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #ADD8E6; /* Lighter blue */
+            background-color: #87CEEB; /* Sky blue */
         }
 
         canvas {
@@ -135,9 +135,9 @@
         }
 
         function drawWave() {
-            ctx.fillStyle = "rgba(30, 144, 255, 0.1)"; // Ocean blue transparency
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Transparent black
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#FFFFFF"; // White text
+            ctx.fillStyle = "#1E90FF"; // Ocean blue text
             ctx.font = fontSize + "px Courier New";
 
             for (var y = 0; y < drops.length; y++) {
