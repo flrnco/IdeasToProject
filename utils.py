@@ -169,6 +169,8 @@ conversation_history.append({
         "role": "assistant",
         "content": chat_response.choices[0].message.content
     })
+    
+print(chat_response.choices[0].message.content)
 
 # Fonction pour générer une réponse simple du bot
 def get_bot_response(user_input):
