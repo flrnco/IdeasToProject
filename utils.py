@@ -160,7 +160,7 @@ conversation_history.append(
 #        })
 
 
-chat_response = throttled_chat_complete(
+chat_response = throttled_chat_complete(client,
     model= model,
     messages = conversation_history
 )
@@ -184,7 +184,7 @@ def get_bot_response(user_input):
     })
     
     # Send the entire conversation history to the API
-    chat_response = throttled_chat_complete(
+    chat_response = throttled_chat_complete(client,
         model=model,
         messages=conversation_history
     )
