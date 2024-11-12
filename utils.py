@@ -1,4 +1,6 @@
 from mistralai import Mistral
+import time
+from mistralai.models.sdkerror import SDKError
 
 # Mistral init
 #api_key = os.environ["MISTRAL_AI_KEY"]
@@ -10,6 +12,24 @@ client = Mistral(api_key="MJ0ZB2X5IiJd7LslJOl74kwivn0U98QI")
 
 # List to store the conversation history
 conversation_history = []
+
+
+# Replace `client.chat.complete` call with throttled function
+last_request_time = 0  # Store the last request time globally
+
+# Management of the rate of API calls (1 request per second max)
+def throttled_chat_complete(client, **kwargs):
+    global last_request_time
+    rate_limit_interval = 1.1  # Interval in seconds between requests (adjust as needed)
+    
+    now = time.time()
+    if now - last_request_time < rate_limit_interval:
+        time.sleep(rate_limit_interval - (now - last_request_time))
+    last_request_time = time.time()
+
+    # Make the API call
+    return client.chat.complete(**kwargs)
+
 
 prompt_prep_1 = """Je vais te donner un document type decrivant un projet ci-dessous.
 J'aimerais que tu utilises ce document en tant qu'exemple de trame de document descriptif projet. Quand je te demanderai de consolider les idees de chaque projet dans
@@ -138,11 +158,13 @@ conversation_history.append(
 #                prompt_consigne
 #            ),
 #        })
-    
-chat_response = client.chat.complete(
+
+
+chat_response = throttled_chat_complete(
     model= model,
     messages = conversation_history
 )
+
 conversation_history.append({
         "role": "assistant",
         "content": chat_response.choices[0].message.content
@@ -162,7 +184,7 @@ def get_bot_response(user_input):
     })
     
     # Send the entire conversation history to the API
-    chat_response = client.chat.complete(
+    chat_response = throttled_chat_complete(
         model=model,
         messages=conversation_history
     )

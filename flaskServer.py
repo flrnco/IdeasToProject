@@ -11,7 +11,8 @@ from flask import request, redirect, url_for, flash
 import eventlet
 import time    							# To measure time performance
 import sys
-#from utils import *
+from utils import *
+from mistralai.models.sdkerror import SDKError
 
 ###########################################################################
 #            RUN                                                          #
@@ -148,7 +149,13 @@ def handle_message(message):
     
     # Build a response    
     response = "... let me think about it"
-    #response = get_bot_response(message)
+    #try:
+    #    response = get_bot_response(message)
+    #except SDKError as e:
+    #    if e.status_code == 429:
+    #        print("Rate limit exceeded. It shouldn't happen, please fix it...")
+    #        time.sleep(1)  # Delay before retrying
+        
     
     message_id = str(uuid4())
     timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
