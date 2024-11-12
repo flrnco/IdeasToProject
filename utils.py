@@ -1,6 +1,5 @@
 from mistralai import Mistral
 import time
-from mistralai.models.sdkerror import SDKError
 
 # Mistral init
 #api_key = os.environ["MISTRAL_AI_KEY"]
