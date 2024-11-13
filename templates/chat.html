@@ -64,6 +64,17 @@
             background-color: rgba(30, 144, 255, 0.1); /* Light translucent blue */
         }
 
+        #score-box {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
         input[type="text"] {
             width: calc(100% - 100px);
             padding: 10px;
@@ -114,6 +125,8 @@
     <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleEnter(event)" />
     <button onclick="sendMessage()">Send</button>
 
+    <div id="score-box" style="display: none;"></div>
+
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
     <script>
@@ -125,6 +138,7 @@
         // Display bot's initial message on page load
         window.onload = function() {
             displayMessage("Hello ! Je suis spécialiste en lancement de projet ! Tu peux me décrire ta dernière idée de projet ?", 'bot');
+            updateScore();
         };
 
         socket.on('connect', function() {
@@ -144,6 +158,7 @@
                 socket.send(message);
                 document.getElementById('message-input').value = '';
                 changeAvatar(); // Change avatar on each message sent
+                updateScore(); // Update the score dynamically
             } else {
                 console.log('No message to send.');
             }
@@ -179,6 +194,29 @@
             ];
             const randomIndex = Math.floor(Math.random() * avatarImages.length);
             document.getElementById('avatar').src = avatarImages[randomIndex];
+        }
+
+        // Function to get evaluation score
+        function getEvaluationScore() {
+            // Example logic: Replace with real computation
+            return Math.floor(Math.random() * 101); // Random score between 0 and 100
+        }
+
+        // Function to update the score box
+        function updateScore() {
+            const scoreBox = document.getElementById('score-box');
+            const score = getEvaluationScore();
+
+            if (score > 0) {
+                // Set score box background color based on the score
+                const green = Math.min(255, Math.floor((score / 100) * 255));
+                const red = Math.min(255, 255 - green);
+                scoreBox.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+                scoreBox.textContent = `${score}/100`;
+                scoreBox.style.display = 'block';
+            } else {
+                scoreBox.style.display = 'none';
+            }
         }
 
         // Wave effect background
