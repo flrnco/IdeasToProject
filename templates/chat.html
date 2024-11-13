@@ -29,8 +29,14 @@
             margin-top: 20px;
         }
 
-        #avatar {
+        #avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-left: 20px;
+        }
+
+        #avatar {
             max-width: 80px; /* Adjust the image size */
             height: auto;
             border-radius: 10px;
@@ -65,14 +71,15 @@
         }
 
         #score-box {
-            position: fixed;
-            top: 10px;
-            right: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1.5rem;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
             font-weight: bold;
             color: white;
+            width: 60px;
+            text-align: center;
+            opacity: 0.8; /* Add transparency */
         }
 
         input[type="text"] {
@@ -119,13 +126,14 @@
             <div id="chat-title">Welcome to Business Flow!</div>
             <!-- Messages will appear here -->
         </div>
-        <img id="avatar" src="/static/images/avatar_hello.jpg" alt="Avatar">
+        <div id="avatar-container">
+            <img id="avatar" src="/static/images/avatar_hello.jpg" alt="Avatar">
+            <div id="score-box" style="display: none;"></div>
+        </div>
     </div>
 
     <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleEnter(event)" />
     <button onclick="sendMessage()">Send</button>
-
-    <div id="score-box" style="display: none;"></div>
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
@@ -211,7 +219,7 @@
                 // Set score box background color based on the score
                 const green = Math.min(255, Math.floor((score / 100) * 255));
                 const red = Math.min(255, 255 - green);
-                scoreBox.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+                scoreBox.style.backgroundColor = `rgba(${red}, ${green}, 0, 0.8)`; // Add transparency
                 scoreBox.textContent = `${score}/100`;
                 scoreBox.style.display = 'block';
             } else {
