@@ -1,5 +1,7 @@
 from mistralai import Mistral
 import time
+import re
+import random
 
 # Mistral init
 #api_key = os.environ["MISTRAL_AI_KEY"]
@@ -122,6 +124,17 @@ Assure-toi que la note totale est egale a la somme des notes de chaque section.
 Si tu n'as aucune information pour repondre a une section du systeme de notation, cela vaut 0 points.
 Ne mets pas de note minimale par section. Ensuite, pose des questions afin d'ameliorer la note sur les sections qui en ont le plus besoin en les classant en fonction des points que cela rapporterait."""
 
+list_preparationForTheNextQuestion_g = [
+"Merci pour ces complements !",
+"Merci de partager tout ca avoir moi!",
+"Merci !",
+"Ok je vois... Pour aller plus loin :",
+"Super !",
+"Hmm... ok ! Je crois que ça m'aide a y voir plus clair !",
+"Ah oui ? Top !",
+"Merci pour ces explications."]
+
+
 # Ex 1er input user projet : J'ai une idée d'outil de planification du personnel naviguant pour les compagnies aérienne, qui peut leur faire gagner jusqu'a 5% de productivite.
 # Ex 2eme input : plus spécifiquement, cet outil sera développer par les équipes RO (4 ingénieurs en optimisation à temps plein pendant 1 an) et consiste à utiliser les méthodes de programmation linéaire afin de coder des algorithmes permettant d'optimiser le remplissage des plannings des hôtesses et stewards, tout en respectant les contraintes réglementaires de chaque compagnie aérienne. Aujourd'hui ce processus est fait à la main avec des agents planificateurs, ce qui ne permet pas de s'approcher de la solution optimale d'affectation chaque mois. Grâce à ce projet, nous calculerons en 1 journée chaque moi (contre 10 jours aujourd'hui) les plannings mensuels, et nous garantirons une augmentation de 5% de productivité.
 
@@ -169,7 +182,6 @@ conversation_history.append({
         "content": chat_response.choices[0].message.content
     })
     
-print(chat_response.choices[0].message.content)
 
 # Fonction pour générer une réponse simple du bot
 def get_bot_response(user_input):
@@ -192,10 +204,35 @@ def get_bot_response(user_input):
     # Extract the bot's response content (as a plain string)
     bot_response_content = chat_response.choices[0].message.content
     
+    # Extract the current evaluation of the document if any
+    match = re.search(r"<##note_totale##>\s*(\d+)", bot_response_content)
+    if match:
+        total_note = match.group(1)  # Extract the number after the tag
+    
+    # Extract the list of follow-up questions to ask
+    questions = re.findall(r"<\*\*question\*\*>(.*?)(?=<|\n|$)", user_response)
+    if questions:
+        question_list = [question.strip() for question in questions]
+
+    random_question = random.choice(question_list)
+    
+    random_prep = ""
+    if beginning_of_chat:
+        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Ma premiere est:"
+    
+    else:
+        random_prep = random.choice(list_preparationForTheNextQuestion_g)
+    
     # Add bot response to the conversation history
     conversation_history.append({
         "role": "assistant",
         "content": bot_response_content
     })
     
-    return bot_response_content
+    bot_response = random_prep + "\n" + random_question
+    
+    # It's not the first interaction anymore
+    beginning_of_chat = 0
+    
+    #return bot_response_content
+    return bot_response
