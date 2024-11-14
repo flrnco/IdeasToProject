@@ -70,18 +70,6 @@
             background-color: rgba(30, 144, 255, 0.1); /* Light translucent blue */
         }
 
-        #score-box {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: white;
-            width: 60px;
-            text-align: center;
-            opacity: 0.8; /* Add transparency */
-        }
-
         input[type="text"] {
             width: calc(100% - 100px);
             padding: 10px;
@@ -128,7 +116,6 @@
         </div>
         <div id="avatar-container">
             <img id="avatar" src="/static/images/avatar_hello.jpg" alt="Avatar">
-            <div id="score-box" style="display: none;"></div>
         </div>
     </div>
 
@@ -138,15 +125,11 @@
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
     <script>
-        // SocketIO connection
-        var socket = io('http://13.60.105.20/', {
-            transports: ['websocket', 'polling']
-        });
+        var socket = io('http://13.60.105.20/', { transports: ['websocket', 'polling'] });
 
         // Display bot's initial message on page load
         window.onload = function() {
             displayMessage("Hello ! Je suis spécialiste en lancement de projet ! Tu peux me décrire ta dernière idée de projet ?", 'bot');
-            updateScore();
         };
 
         socket.on('connect', function() {
@@ -154,21 +137,17 @@
         });
 
         socket.on('message', function(msg) {
-            console.log('Message from server:', msg); // Debugging log
-            displayMessage(msg, 'bot');
+            console.log('Message from server:', msg);
+            setTimeout(() => handleBotResponse(msg), 500); // Simulate delay for the bot response
         });
 
         function sendMessage() {
             let message = document.getElementById('message-input').value;
-            console.log('Sending message:', message); // Debugging log
-            if (message && message.trim() !== '') {
+            if (message.trim() !== '') {
                 displayMessage(message, 'user');
+                simulateThinking(); // Display thinking avatar and dots
                 socket.send(message);
                 document.getElementById('message-input').value = '';
-                changeAvatar(); // Change avatar on each message sent
-                updateScore(); // Update the score dynamically
-            } else {
-                console.log('No message to send.');
             }
         }
 
@@ -193,91 +172,43 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // Function to simulate thinking
+        function simulateThinking() {
+            const avatar = document.getElementById('avatar');
+            avatar.src = '/static/images/avatar_thinking1.jpg';
+
+            const chatBox = document.getElementById('chat-box');
+            const thinkingDots = document.createElement('div');
+            thinkingDots.id = 'thinking-dots';
+            thinkingDots.textContent = '...';
+            thinkingDots.classList.add('bot-message');
+            chatBox.appendChild(thinkingDots);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to handle bot's response
+        function handleBotResponse(response) {
+            const avatar = document.getElementById('avatar');
+            changeAvatar(); // Change avatar back
+
+            const thinkingDots = document.getElementById('thinking-dots');
+            if (thinkingDots) {
+                thinkingDots.remove(); // Remove "..." from chat
+            }
+
+            displayMessage(response, 'bot'); // Display bot's response
+        }
+
         // Function to change avatar randomly
         function changeAvatar() {
             const avatarImages = [
                 '/static/images/avatar_hello.jpg',
                 '/static/images/avatar_celebration.jpg',
-                '/static/images/avatar_happy.jpg'
+                '/static/images/avatar_welldone.jpg'
             ];
             const randomIndex = Math.floor(Math.random() * avatarImages.length);
             document.getElementById('avatar').src = avatarImages[randomIndex];
         }
-
-        // Function to get evaluation score
-        function getEvaluationScore() {
-            // Example logic: Replace with real computation
-            return Math.floor(Math.random() * 101); // Random score between 0 and 100
-        }
-
-        // Function to update the score box
-        function updateScore() {
-            const scoreBox = document.getElementById('score-box');
-            const score = getEvaluationScore();
-
-            if (score > 0) {
-                // Set score box background color based on the score
-                const green = Math.min(255, Math.floor((score / 100) * 255));
-                const red = Math.min(255, 255 - green);
-                scoreBox.style.backgroundColor = `rgba(${red}, ${green}, 0, 0.8)`; // Add transparency
-                scoreBox.textContent = `${score}/100`;
-                scoreBox.style.display = 'block';
-            } else {
-                scoreBox.style.display = 'none';
-            }
-        }
-
-        // Wave effect background
-        var canvas = document.getElementById("wave");
-        var ctx = canvas.getContext("2d");
-
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-
-        var textArray = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789".split("");
-        var fontSize = 16;
-        var columns = Math.floor(canvas.height / fontSize);
-        var waveAmplitude = 20; // Amplitude of the wave
-        var waveFrequency = 0.02; // Frequency of the wave
-        var time = 0;
-
-        var drops = [];
-        for (var y = 0; y < columns; y++) {
-            drops[y] = 0;
-        }
-
-        function drawWave() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Transparent black
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#1E90FF"; // Ocean blue text
-            ctx.font = fontSize + "px Courier New";
-
-            for (var y = 0; y < drops.length; y++) {
-                var text = textArray[Math.floor(Math.random() * textArray.length)];
-                var x = drops[y] * fontSize;
-                var waveOffset = Math.sin(y * waveFrequency + time) * waveAmplitude;
-
-                ctx.fillText(text, x, y * fontSize + waveOffset);
-
-                drops[y]++;
-
-                if (drops[y] * fontSize > canvas.width && Math.random() > 0.95) {
-                    drops[y] = 0;
-                }
-            }
-
-            time += 0.05;
-        }
-
-        setInterval(drawWave, 33);
-
-        window.onresize = function() {
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
-            columns = Math.floor(canvas.height / fontSize);
-            drops = [];
-            for (var y = 0; y < columns; y++) drops[y] = 0;
-        };
     </script>
 </body>
 </html>
