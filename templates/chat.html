@@ -151,10 +151,15 @@
         });
 
         socket.on('message', function(data) {
-            const { msg, total_score } = data; // Extract response and score
-            console.log('Message from server:', msg);
-            setTimeout(() => handleBotResponse(msg, total_score), 500); // Simulate delay for the bot response
-        });
+			console.log('Received data:', data); // Log the full data structure
+			const { msg, total_score } = data || {}; // Safely destructure with default values
+			console.log('Message:', msg, 'Score:', total_score); // Debugging log
+			if (msg) {
+				setTimeout(() => handleBotResponse(msg, total_score), 500);
+			} else {
+				console.error("Message is undefined or missing!");
+			}
+		});
 
         function sendMessage() {
             let message = document.getElementById('message-input').value;
@@ -174,7 +179,11 @@
 
         // Function to display messages in chat box
         function displayMessage(msg, sender) {
-            const chatBox = document.getElementById('chat-box');
+            if (!msg) {
+				console.error('Message is empty or undefined');
+				return;
+			}
+			const chatBox = document.getElementById('chat-box');
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             if (sender === 'user') {
@@ -203,7 +212,7 @@
         }
 
         // Function to handle bot's response
-        function handleBotResponse(response, score) {
+        function handleBotResponse(response = "Something went wrong!", score = 0) {
             const avatar = document.getElementById('avatar');
             changeAvatar(); // Change avatar back
 
