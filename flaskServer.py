@@ -146,14 +146,13 @@ def log_chat():
 def handle_message(message):
     logger.info(f"Message received: {message}")
     
-    # Build a response    
+    # Build a response and get the total score
     response, total_score = get_bot_response(message)
-        
     
     message_id = str(uuid4())
     timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
-    # log chat in our database
+    # Log chat in our database
     username = 'Guest'
     if current_user.is_authenticated:
         username = current_user.username
@@ -172,7 +171,8 @@ def handle_message(message):
     except Exception as e:
         logger.error(f"Error logging chat to DynamoDB: {e}")
 
-    send(response, broadcast=False)
+    # Send both response and total_score as a dictionary
+    send({'response': response, 'total_score': total_score}, broadcast=False)
 
 @app.route('/logout')
 @login_required
