@@ -42,8 +42,8 @@
             border-radius: 10px;
             border: 2px solid #1E90FF; /* Optional blue border */
         }
-
-        #score-box {
+		
+		#score-box {
             margin-top: 10px;
             padding: 10px;
             border-radius: 5px;
@@ -139,10 +139,7 @@
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
     <script>
-        // SocketIO connection
-        var socket = io('http://13.60.105.20/', {
-            transports: ['websocket', 'polling']
-        });
+        var socket = io('http://13.60.105.20/', { transports: ['websocket', 'polling'] });
 
         // Display bot's initial message on page load
         window.onload = function() {
@@ -154,21 +151,18 @@
         });
 
         socket.on('message', function(data) {
-            console.log('Message from server:', data); // Debugging log
             const { msg, total_score } = data; // Extract response and score
-            displayMessage(msg, 'bot');
-            updateScore(total_score);
+            console.log('Message from server:', msg);
+            setTimeout(() => handleBotResponse(msg, total_score), 500); // Simulate delay for the bot response
         });
 
         function sendMessage() {
             let message = document.getElementById('message-input').value;
-            console.log('Sending message:', message); // Debugging log
-            if (message && message.trim() !== '') {
+            if (message.trim() !== '') {
                 displayMessage(message, 'user');
+                simulateThinking(); // Display thinking avatar and dots
                 socket.send(message);
                 document.getElementById('message-input').value = '';
-            } else {
-                console.log('No message to send.');
             }
         }
 
@@ -188,17 +182,44 @@
             } else {
                 messageElement.classList.add('bot-message');
             }
-            // Handle line breaks in bot messages
-            messageElement.innerHTML = msg.replace(/\n/g, '<br>');
+			// Replace \n with <br> for proper line breaks
+			messageElement.innerHTML = msg.replace(/\n/g, '<br>');
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to simulate thinking
+        function simulateThinking() {
+            const avatar = document.getElementById('avatar');
+            avatar.src = '/static/images/avatar_thinking1.jpg';
+
+            const chatBox = document.getElementById('chat-box');
+            const thinkingDots = document.createElement('div');
+            thinkingDots.id = 'thinking-dots';
+            thinkingDots.textContent = '...';
+            thinkingDots.classList.add('bot-message');
+            chatBox.appendChild(thinkingDots);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to handle bot's response
+        function handleBotResponse(response, score) {
+            const avatar = document.getElementById('avatar');
+            changeAvatar(); // Change avatar back
+
+            const thinkingDots = document.getElementById('thinking-dots');
+            if (thinkingDots) {
+                thinkingDots.remove(); // Remove "..." from chat
+            }
+
+            displayMessage(response, 'bot'); // Display bot's response
+            updateScore(score); // Update the evaluation score
         }
 
         // Function to update the score box
         function updateScore(score) {
             const scoreBox = document.getElementById('score-box');
             if (score > 0) {
-                // Set score box background color based on the score
                 const green = Math.min(255, Math.floor((score / 100) * 255));
                 const red = Math.min(255, 255 - green);
                 scoreBox.style.backgroundColor = `rgba(${red}, ${green}, 0, 0.8)`; // Add transparency
@@ -209,7 +230,18 @@
             }
         }
 
-        // Wave effect background
+        // Function to change avatar randomly
+        function changeAvatar() {
+            const avatarImages = [
+                '/static/images/avatar_hello.jpg',
+                '/static/images/avatar_celebration.jpg',
+                '/static/images/avatar_welldone.jpg'
+            ];
+            const randomIndex = Math.floor(Math.random() * avatarImages.length);
+            document.getElementById('avatar').src = avatarImages[randomIndex];
+        }
+		
+		// Wave effect background
         var canvas = document.getElementById("wave");
         var ctx = canvas.getContext("2d");
 
