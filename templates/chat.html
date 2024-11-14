@@ -152,10 +152,10 @@
 
         socket.on('message', function(data) {
 			console.log('Received data:', data); // Log the full data structure
-			const { msg, total_score } = data || {}; // Safely destructure with default values
-			console.log('Message:', msg, 'Score:', total_score); // Debugging log
-			if (msg) {
-				setTimeout(() => handleBotResponse(msg, total_score), 500);
+			const { response, total_score } = data || {}; // Safely destructure with default values
+			console.log('Message:', response, 'Score:', total_score); // Debugging log
+			if (response) {
+				setTimeout(() => handleBotResponse(response, total_score), 500);
 			} else {
 				console.error("Message is undefined or missing!");
 			}
