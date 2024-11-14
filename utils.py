@@ -244,61 +244,64 @@ def get_bot_response(user_input):
     global beginning_of_chat
     global question_list
     
-    prompt_l = user_input
-    if beginning_of_chat:
-        prompt_l = "Ok, voici la premiere idee projet que je te propose d'evaluer : "+prompt_l
+    time.sleep(3)
+    return "Ok, je vais voir...","0"
     
-    # Add user input to the conversation history
-    conversation_history.append({
-        "role": "user",
-        "content": prompt_l
-    })
-    
-    # Send the entire conversation history to the API
-    chat_response = throttled_chat_complete(client,
-        model=model,
-        messages=conversation_history
-    )
-    # Extract the bot's response content (as a plain string)
-    bot_response_content = chat_response.choices[0].message.content
-    
-    # Extract the current evaluation of the document if any
-    match = re.search(r"<##note_totale##>\s*(\d+)", bot_response_content)
-    total_note = 0
-    if match:
-        total_note = match.group(1)  # Extract the number after the tag
-    
-    # Extract the list of follow-up questions to ask
-    questions = re.findall(r"<##question##>(.*?)(?=<|\n|$)", bot_response_content)
-    question_list = []
-    if questions:
-        question_list = [question.strip() for question in questions]
-    
-    random_question = "Je n'ai pas d'autre question. Merci !"
-    if len(question_list) > 0:
-        random_question = random.choice(question_list)
-    
-    random_prep = ""
-    if beginning_of_chat:
-        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Mes premieres sont:"
-    
-    else:
-        random_prep = random.choice(list_preparationForTheNextQuestion_g)
-    
-    # Add bot response to the conversation history
-    conversation_history.append({
-        "role": "assistant",
-        "content": bot_response_content
-    })
-    
-    bot_response = random_prep
-    for question in question_list:
-        bot_response += "\n - " + question
-    
-    # It's not the first interaction anymore
-    beginning_of_chat = 0
-    
-    #return bot_response_content
-    return bot_response, total_score
+    #prompt_l = user_input
+    #if beginning_of_chat:
+    #    prompt_l = "Ok, voici la premiere idee projet que je te propose d'evaluer : "+prompt_l
+    #
+    ## Add user input to the conversation history
+    #conversation_history.append({
+    #    "role": "user",
+    #    "content": prompt_l
+    #})
+    #
+    ## Send the entire conversation history to the API
+    #chat_response = throttled_chat_complete(client,
+    #    model=model,
+    #    messages=conversation_history
+    #)
+    ## Extract the bot's response content (as a plain string)
+    #bot_response_content = chat_response.choices[0].message.content
+    #
+    ## Extract the current evaluation of the document if any
+    #match = re.search(r"<##note_totale##>\s*(\d+)", bot_response_content)
+    #total_note = 0
+    #if match:
+    #    total_note = match.group(1)  # Extract the number after the tag
+    #
+    ## Extract the list of follow-up questions to ask
+    #questions = re.findall(r"<##question##>(.*?)(?=<|\n|$)", bot_response_content)
+    #question_list = []
+    #if questions:
+    #    question_list = [question.strip() for question in questions]
+    #
+    #random_question = "Je n'ai pas d'autre question. Merci !"
+    #if len(question_list) > 0:
+    #    random_question = random.choice(question_list)
+    #
+    #random_prep = ""
+    #if beginning_of_chat:
+    #    random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Mes premieres sont:"
+    #
+    #else:
+    #    random_prep = random.choice(list_preparationForTheNextQuestion_g)
+    #
+    ## Add bot response to the conversation history
+    #conversation_history.append({
+    #    "role": "assistant",
+    #    "content": bot_response_content
+    #})
+    #
+    #bot_response = random_prep
+    #for question in question_list:
+    #    bot_response += "\n - " + question
+    #
+    ## It's not the first interaction anymore
+    #beginning_of_chat = 0
+    #
+    ##return bot_response_content
+    #return bot_response, total_score
     
    
