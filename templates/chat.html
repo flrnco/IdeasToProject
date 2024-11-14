@@ -167,7 +167,8 @@
             } else {
                 messageElement.classList.add('bot-message');
             }
-            messageElement.textContent = msg;
+			// Replace \n with <br> for proper line breaks
+			messageElement.innerHTML = msg.replace(/\n/g, '<br>');
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
