@@ -210,6 +210,58 @@
             const randomIndex = Math.floor(Math.random() * avatarImages.length);
             document.getElementById('avatar').src = avatarImages[randomIndex];
         }
+		
+		// Wave effect background
+        var canvas = document.getElementById("wave");
+        var ctx = canvas.getContext("2d");
+
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        var textArray = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789".split("");
+        var fontSize = 16;
+        var columns = Math.floor(canvas.height / fontSize);
+        var waveAmplitude = 20; // Amplitude of the wave
+        var waveFrequency = 0.02; // Frequency of the wave
+        var time = 0;
+
+        var drops = [];
+        for (var y = 0; y < columns; y++) {
+            drops[y] = 0;
+        }
+
+        function drawWave() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Transparent black
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#1E90FF"; // Ocean blue text
+            ctx.font = fontSize + "px Courier New";
+
+            for (var y = 0; y < drops.length; y++) {
+                var text = textArray[Math.floor(Math.random() * textArray.length)];
+                var x = drops[y] * fontSize;
+                var waveOffset = Math.sin(y * waveFrequency + time) * waveAmplitude;
+
+                ctx.fillText(text, x, y * fontSize + waveOffset);
+
+                drops[y]++;
+
+                if (drops[y] * fontSize > canvas.width && Math.random() > 0.95) {
+                    drops[y] = 0;
+                }
+            }
+
+            time += 0.05;
+        }
+
+        setInterval(drawWave, 33);
+
+        window.onresize = function() {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            columns = Math.floor(canvas.height / fontSize);
+            drops = [];
+            for (var y = 0; y < columns; y++) drops[y] = 0;
+        };
     </script>
 </body>
 </html>
