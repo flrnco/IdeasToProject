@@ -281,7 +281,7 @@ def get_bot_response(user_input):
     
     random_prep = ""
     if beginning_of_chat:
-        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Mes premieres sont:"
+        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien !"
     
     else:
         random_prep = random.choice(list_preparationForTheNextQuestion_g)
@@ -294,7 +294,7 @@ def get_bot_response(user_input):
     
     bot_response = random_prep
     for question in question_list:
-        bot_response += "\n - " + question
+        bot_response += "\n > " + question
     
     # It's not the first interaction anymore
     beginning_of_chat = 0
