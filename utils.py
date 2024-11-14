@@ -265,9 +265,9 @@ def get_bot_response(user_input):
     
     # Extract the current evaluation of the document if any
     match = re.search(r"<##note_totale##>\s*(\d+)", bot_response_content)
-    total_note = 0
+    total_score = 0
     if match:
-        total_note = match.group(1)  # Extract the number after the tag
+        total_score = match.group(1)  # Extract the number after the tag
     
     # Extract the list of follow-up questions to ask
     questions = re.findall(r"<##question##>(.*?)(?=<|\n|$)", bot_response_content)
