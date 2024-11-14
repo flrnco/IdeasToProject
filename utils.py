@@ -119,20 +119,68 @@ Enfin, calcule la note totale comme somme des notes de chaque section, et indiqu
 Et finalement, en dernière partie de ta réponse, peux-tu poser 3 questions afin d'ameliorer la note sur les sections qui en ont le plus besoin, en les classant en fonction des points que cela rapporterait ?
 Utilise une balise egalement <##question##> avant de poser chaque question. Exemple: <##question##>Peux-tu m'en dire plus sur les gains potentiels que ton projet permettrait d'obtenir ?"""
 
-prompt_consigne = """**Consigne:**
-Assure-toi que la note totale est egale a la somme des notes de chaque section.
-Si tu n'as aucune information pour repondre a une section du systeme de notation, cela vaut 0 points.
-Ne mets pas de note minimale par section. Ensuite, pose des questions afin d'ameliorer la note sur les sections qui en ont le plus besoin en les classant en fonction des points que cela rapporterait."""
+prompt_reshaped = """Consignes pour l'évaluation des idées de projets :
+
+Système de notation :
+
+1-Résumé exécutif (20 points) :
+Présence d'un résumé synthétique et clair des objectifs et enjeux du projet (vaut pour 10 points)
+Clarté et précision dans la description des défis actuels et de la valeur ajoutée proposée (vaut pour 10 points)
+2-Objectifs et bénéfices (20 points) :
+Identification précise des bénéfices quantitatifs (par ex., gains financiers) (vaut pour 10 points)
+Explication claire de l'impact sur les processus existants et des bénéfices pour les parties prenantes (vaut pour 10 points)
+3-Cas d'usage (15 points) :
+Exemples concrets et pertinents des cas d’utilisation, démontrant l'applicabilité du projet dans diverses situations (vaut pour 15 points)
+4-Budget et retour sur investissement (15 points) :
+Détails des coûts estimés et d'un retour sur investissement attendu (vaut pour 15 points)
+5-Utilisateurs et clients cibles (10 points) :
+Identification des utilisateurs et des équipes impliquées, avec description de leurs rôles respectifs (vaut pour 10 points)
+6-Équipe projet et gouvernance (10 points) :
+Présence d'une structure d'équipe et d'un processus de gouvernance clair pour le suivi de projet (vaut pour 10 points)
+7-Planification et roadmap (5 points) :
+Description d'un calendrier clair avec des étapes concrètes, incluant des jalons pour le suivi (vaut pour 5 points)
+8-Risques et solutions (5 points) :
+Identification des risques potentiels, accompagnée de stratégies de mitigation (vaut pour 5 points)
+Notation :
+
+0 point si aucune information
+La moitié des points si cela répond partiellement à l'attente
+Note maximale si cela répond pleinement à l'attente
+Format de la réponse :
+
+Utiliser des balises <##note_NomDeLaSection##> avant d'indiquer la note de chacune des sections. Exemple : <##note_Resume_executif##>5
+Calculer la note totale comme somme des notes de chaque section, et l'indiquer avec la balise <##note_totale##>. Exemple : <##note_totale##>30
+Questions pour amélioration :
+
+Poser 3 questions pour améliorer la note sur les sections qui en ont le plus besoin, en les classant en fonction des points que cela rapporterait.
+Utiliser une balise <##question##> avant de poser chaque question. Exemple : <##question##>Peux-tu m'en dire plus sur les gains potentiels que ton projet permettrait d'obtenir ?
+
+Enfin, je ne veux aucun preambule et aucune explication sur les notes que tu proposes. Ne repete pas les consignes dans tes reponses. Le format de reponse que j'attends est simplement (a titre d'exemple):
+<##note_Resume_executif##>10
+<##note_Objectifs_et_benefices##>5
+<##note_Cas_d_usage##>0
+<##note_Budget_et_retour_sur_investissement##>0
+<##note_Utilisateurs_et_clients_cibles##>0
+<##note_Equipe_projet_et_gouvernance##>0
+<##note_Planification_et_roadmap##>0
+<##note_Risques_et_solutions##>0
+
+<##note_totale##>15
+
+<##question##>La premiere question que tu auras ?
+<##question##>La deuxieme question que tu auras ?
+<##question##>La troisieme question que tu auras ?"""
+
 
 list_preparationForTheNextQuestion_g = [
-"Merci pour ces complements !",
-"Merci de partager tout ca avoir moi!",
-"Merci !",
+"Merci pour ces complements ! Voici mes questions pour poursuivre:",
+"Merci de partager tout ca avoir moi! Voici mes questions pour poursuivre:",
+"Merci ! Voici mes questions pour poursuivre:",
 "Ok je vois... Pour aller plus loin :",
-"Super !",
-"Hmm... ok ! Je crois que ça m'aide a y voir plus clair !",
-"Ah oui ? Top !",
-"Merci pour ces explications."]
+"Super ! Voici mes questions pour poursuivre:",
+"Hmm... ok ! Je crois que ça m'aide a y voir plus clair ! Voici mes questions pour poursuivre:",
+"Ah oui ? Top ! Voici mes questions pour poursuivre:",
+"Merci pour ces explications. Voici mes questions pour poursuivre:"]
 
 
 # Ex 1er input user projet : J'ai une idée d'outil de planification du personnel naviguant pour les compagnies aérienne, qui peut leur faire gagner jusqu'a 5% de productivite.
@@ -149,18 +197,25 @@ beginning_of_chat = 1   # global variable to adjust the prompt for the first int
 #                prompt_prep_1
 #            ),
 #        })
+#conversation_history.append(
+#        {
+#            "role": "user",
+#            "content": (
+#                prompt_prep_2
+#            ),
+#        })
+#conversation_history.append(
+#        {
+#            "role": "user",
+#            "content": (
+#                prompt_prep_3
+#            ),
+#        })
 conversation_history.append(
         {
             "role": "user",
             "content": (
-                prompt_prep_2
-            ),
-        })
-conversation_history.append(
-        {
-            "role": "user",
-            "content": (
-                prompt_prep_3
+                prompt_reshaped
             ),
         })
 #conversation_history.append(
@@ -186,6 +241,9 @@ conversation_history.append({
 # Fonction pour générer une réponse simple du bot
 def get_bot_response(user_input):
     
+    global beginning_of_chat
+    global question_list
+    
     prompt_l = user_input
     if beginning_of_chat:
         prompt_l = "Ok, voici la premiere idee projet que je te propose d'evaluer : "+prompt_l
@@ -206,19 +264,23 @@ def get_bot_response(user_input):
     
     # Extract the current evaluation of the document if any
     match = re.search(r"<##note_totale##>\s*(\d+)", bot_response_content)
+    total_note = 0
     if match:
         total_note = match.group(1)  # Extract the number after the tag
     
     # Extract the list of follow-up questions to ask
-    questions = re.findall(r"<\*\*question\*\*>(.*?)(?=<|\n|$)", user_response)
+    questions = re.findall(r"<##question##>(.*?)(?=<|\n|$)", bot_response_content)
+    question_list = []
     if questions:
         question_list = [question.strip() for question in questions]
-
-    random_question = random.choice(question_list)
+    
+    random_question = "Je n'ai pas d'autre question. Merci !"
+    if len(question_list) > 0:
+        random_question = random.choice(question_list)
     
     random_prep = ""
     if beginning_of_chat:
-        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Ma premiere est:"
+        random_prep = "Merci pour cette premiere description ! J'evalue la completude de ton descriptif sur la droite de l'ecran. Je vais te poser quelques questions pour augmenter le score si tu veux bien ! Mes premieres sont:"
     
     else:
         random_prep = random.choice(list_preparationForTheNextQuestion_g)
@@ -229,10 +291,14 @@ def get_bot_response(user_input):
         "content": bot_response_content
     })
     
-    bot_response = random_prep + "\n" + random_question
+    bot_response = random_prep
+    for question in question_list:
+        bot_response += "\n - " + question
     
     # It's not the first interaction anymore
     beginning_of_chat = 0
     
     #return bot_response_content
-    return bot_response
+    return bot_response, total_score
+    
+   

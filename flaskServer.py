@@ -147,8 +147,7 @@ def handle_message(message):
     logger.info(f"Message received: {message}")
     
     # Build a response    
-    response = "... let me think about it"
-    response = get_bot_response(message)
+    response, total_score = get_bot_response(message)
         
     
     message_id = str(uuid4())
