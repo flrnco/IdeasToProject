@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_socketio import SocketIO, send
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user  # Added current_user
 import boto3
@@ -12,6 +12,7 @@ import eventlet
 import time    							# To measure time performance
 import sys
 from utils import *
+import os
 
 ###########################################################################
 #            RUN                                                          #
@@ -173,6 +174,19 @@ def handle_message(message):
 
     # Send both response and total_score as a dictionary
     send({'response': response, 'total_score': total_score}, broadcast=False)
+
+@app.route('/generate-summary')
+def generate_summary():
+    summary_content = "This is the summary of your project"
+    file_path = "/tmp/project_summary.txt"  # Temporary file path
+
+    # Write the summary content to the file
+    with open(file_path, "w") as file:
+        file.write(summary_content)
+
+    # Serve the file as a downloadable attachment
+    return send_file(file_path, as_attachment=True, download_name="Project_Summary.txt")
+
 
 @app.route('/logout')
 @login_required
