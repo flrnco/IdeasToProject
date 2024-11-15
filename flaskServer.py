@@ -178,6 +178,7 @@ def handle_message(message):
 @app.route('/generate-summary')
 def generate_summary():
     summary_content = "This is the summary of your project"
+    summary_content = summarizeProject()
     file_path = "/tmp/project_summary.txt"  # Temporary file path
 
     # Write the summary content to the file
