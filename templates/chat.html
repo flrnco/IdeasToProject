@@ -132,7 +132,11 @@
             <div id="score-box"></div>
         </div>
     </div>
-
+	<div style="text-align: center; margin: 10px 0;">
+        <button id="print-summary-button" onclick="printSummary()" style="padding: 10px 20px; background-color: #1E90FF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Print Project Summary
+        </button>
+    </div>
     <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleEnter(event)" />
     <button onclick="sendMessage()">Send</button>
 
@@ -290,6 +294,27 @@
             }
 
             time += 0.05;
+        }
+		function printSummary() {
+            fetch('/generate-summary')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Failed to generate project summary');
+                    }
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'Project_Summary.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         setInterval(drawWave, 33);
