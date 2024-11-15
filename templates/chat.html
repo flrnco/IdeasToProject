@@ -214,6 +214,20 @@
             chatBox.appendChild(thinkingDots);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+		// Function to simulate working on the document
+        function simulateWrittingDocument() {
+            const avatar = document.getElementById('avatar');
+            avatar.src = '/static/images/avatar_thinking2.jpg';
+
+            const chatBox = document.getElementById('chat-box');
+            const writtingDocElement = document.createElement('div');
+            writtingDocElement.id = 'writting-doc';
+            writtingDocElement.textContent = 'Writting the project document...';
+            writtingDocElement.classList.add('bot-message');
+			writtingDocElement.style.fontStyle = 'italic'; // Apply italic style
+            chatBox.appendChild(writtingDocElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
         // Function to handle bot's response
         function handleBotResponse(response = "Something went wrong!", score = 0) {
@@ -296,7 +310,8 @@
             time += 0.05;
         }
 		function printSummary() {
-            fetch('/generate-summary')
+            simulateWrittingDocument();
+			fetch('/generate-summary')
                 .then(response => {
                     if (response.ok) {
                         return response.blob();
@@ -309,12 +324,18 @@
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'Project_Summary.txt';
+                    a.download = 'Project_Summary.html';
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
                 })
                 .catch(error => console.error('Error:', error));
+			changeAvatar(); // Change avatar back
+
+            const writtingDocElement = document.getElementById('writting-doc');
+            if (writtingDocElement) {
+                writtingDocElement.remove(); // Remove "Writting the doc..." from the chat
+            }
         }
 
         setInterval(drawWave, 33);
