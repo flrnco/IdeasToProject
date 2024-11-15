@@ -179,14 +179,14 @@ def handle_message(message):
 def generate_summary():
     summary_content = "This is the summary of your project"
     summary_content = summarizeProject()
-    file_path = "/tmp/project_summary.txt"  # Temporary file path
+    file_path = "/tmp/project_summary.html"  # Temporary file path
 
     # Write the summary content to the file
     with open(file_path, "w") as file:
         file.write(summary_content)
 
     # Serve the file as a downloadable attachment
-    return send_file(file_path, as_attachment=True, download_name="Project_Summary.txt")
+    return send_file(file_path, as_attachment=True, download_name="Project_Summary.html")
 
 
 @app.route('/logout')

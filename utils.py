@@ -142,7 +142,7 @@ Est-ce que tu peux faire ca ?"""
 #Et j'aimerais que tu mettes ton document de synthese entre des balises <##synthese##>Ta synthese projet<\##synthese>.
 
 prompt_doc_example = """Voici la trame de document de descriptif projet a prendre en exemple (ci-dessous).
-Utilise cette trame pour faire le resumé de l'idée projet que je t'ai partagée.
+Utilise cette trame pour faire le resumé de l'idée projet que je t'ai partagée. Merci de me partager le résumé avec de la mise en forme de sorte que je puisse l'ouvrir en format .html.
 
 Exemple de trame de document :
 Projet : Lumis Un nouvel outil pour le design du reseau de transport
