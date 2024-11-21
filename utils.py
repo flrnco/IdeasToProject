@@ -138,7 +138,7 @@ list_preparationForTheNextQuestion_g = [
 prep_print_document = """Super, merci pour ces notes !
 Evolution des consignes:
 J'aimerais maintenant que tu écrives un résumé de tous les éléments partagés en forme de document de synthèse.
-Merci d'ajouter de la mise en forme (couleur d'arrière plan, informations clés en gras, bande pour le titre, section à compléter auteur / date / équipe en italique au début) de sorte que je puisse copier/coller ce que tu vas fournir et l'ouvrir en format .html.
+Merci d'ajouter de la mise en forme (couleur d'arrière plan, informations clés en gras, bande pour le titre contenant le nom du projet, section à compléter auteur / date / équipe en italique au début) de sorte que je puisse copier/coller ce que tu vas fournir et l'ouvrir en format .html.
 Est-ce que tu peux faire ca ?"""
 #Et j'aimerais que tu mettes ton document de synthese entre des balises <##synthese##>Ta synthese projet<\##synthese>.
 
@@ -319,4 +319,7 @@ def summarizeProject():
     # Extract the bot's response content (as a plain string)
     projectSummary = chat_response.choices[0].message.content
     
-    return projectSummary
+    # Extract only what is within html tag
+    html_content = re.search(r"```html\n(.*?)```", projectSummary, re.DOTALL)
+    
+    return html_content
