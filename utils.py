@@ -320,6 +320,6 @@ def summarizeProject():
     projectSummary = chat_response.choices[0].message.content
     
     # Extract only what is within html tag
-    html_content = re.search(r"```html\n(.*?)```", projectSummary, re.DOTALL)
+    html_content = re.search(r"```html\n(.*?)```", projectSummary, re.DOTALL).group(1)
     
     return html_content
