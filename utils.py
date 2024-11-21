@@ -137,7 +137,8 @@ list_preparationForTheNextQuestion_g = [
 
 prep_print_document = """Super, merci pour ces notes !
 Evolution des consignes:
-Maintenant je vais te donner un exemple de trame de document projet, et j'aimerais que tu utilises le squelette de ce document comme exemple pour resumer le projet que l'on a discute.
+J'aimerais maintenant que tu écrives un résumé de tous les éléments partagés en forme de document de synthèse.
+Merci d'ajouter de la mise en forme (couleur d'arrière plan, informations clés en gras, bande pour le titre, section à compléter auteur / date / équipe en italique au début) de sorte que je puisse copier/coller ce que tu vas fournir et l'ouvrir en format .html.
 Est-ce que tu peux faire ca ?"""
 #Et j'aimerais que tu mettes ton document de synthese entre des balises <##synthese##>Ta synthese projet<\##synthese>.
 
@@ -304,11 +305,11 @@ def summarizeProject():
         "role": "user",
         "content": prep_print_document
     })
-    # Give an example of document
-    conversation_history.append({
-        "role": "user",
-        "content": prompt_doc_example
-    })
+    ### Give an example of document
+    ##conversation_history.append({
+    ##    "role": "user",
+    ##    "content": prompt_doc_example
+    ##})
     
     # Send the entire conversation history to the API
     chat_response = throttled_chat_complete(client,
