@@ -227,7 +227,32 @@ conversation_history.append({
         "role": "assistant",
         "content": chat_response.choices[0].message.content
     })
+
+# Reset 
+def reset_beginning_of_chat():
+    global beginning_of_chat
+    beginning_of_chat = 1
+    # reset the conversation_history
+    conversation_history.clear()
+    conversation_history.append(
+    {
+        "role": "user",
+        "content": (
+            prompt_reshaped
+        ),
+    })
+
+
+    chat_response = throttled_chat_complete(client,
+        model= model,
+        messages = conversation_history
+    )
     
+    conversation_history.append({
+            "role": "assistant",
+            "content": chat_response.choices[0].message.content
+    })
+
 
 # Fonction pour générer une réponse simple du bot
 def get_bot_response(user_input):
@@ -236,7 +261,7 @@ def get_bot_response(user_input):
     global question_list
     
     prompt_l = user_input
-    if beginning_of_chat:
+    if beginning_of_chat:                
         prompt_l = "Ok, voici la premiere idee projet que je te propose d'evaluer : "+prompt_l
     
     # Add user input to the conversation history

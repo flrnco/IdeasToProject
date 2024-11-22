@@ -188,7 +188,11 @@ def generate_summary():
     # Serve the file as a downloadable attachment
     return send_file(file_path, as_attachment=True, download_name="Project_Summary.html")
 
-
+@app.route('/reset-chat', methods=['POST'])
+def reset_chat():
+    reset_beginning_of_chat()
+    return jsonify({'status': 'success', 'message': 'Chat reset successfully'})
+    
 @app.route('/logout')
 @login_required
 def logout():
