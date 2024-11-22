@@ -148,8 +148,20 @@
 
         // Display bot's initial message on page load
         window.onload = function() {
-            displayMessage("Hello ! Je suis spécialiste en lancement de projet ! Tu peux me décrire ta dernière idée de projet ?", 'bot');
-        };
+			fetch('/reset-chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log(data.message); // Optional: log success message
+				// Display the initial message after the reset is confirmed
+				displayMessage("Hello ! Je suis spécialiste en lancement de projet ! Tu peux me décrire ta dernière idée de projet ?", 'bot');
+			})
+			.catch(error => console.error('Error:', error));
+		};
 
         socket.on('connect', function() {
             console.log('Connected to server');
